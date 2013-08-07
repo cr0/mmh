@@ -26,6 +26,6 @@
     "passport-amazon": "0.1.x",
     "passport-google-oauth": "0.1.x",
     "passport-facebook": "0.1.x",
-    "jade": "0.34.y"
+    "jade": "0.34.x"
   }
 }
