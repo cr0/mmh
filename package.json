@@ -1,0 +1,31 @@
+{
+  "author": "Christian Roth",
+  "private": true,
+  "name": "mmh",
+  "description": "doing as much as nothing",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cr0/mmh"
+  },
+  "keywords": [
+    "node",
+    "framework",
+    "coffee",
+    "mvc"
+  ],
+  "author": "Christian Roth <christian.roth@port17.de> (https://github.com/cr0)",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "main": "./lib/index",
+  "dependencies": {
+    "coffee-script": "1.6.x",
+    "express": "3.3.x",
+    "mongoose": "3.6.x",
+    "passport": "0.1.x",
+    "passport-amazon": "0.1.x",
+    "passport-google-oauth": "0.1.x",
+    "passport-facebook": "0.1.x",
+    "jade": "0.34.y"
+  }
+}
