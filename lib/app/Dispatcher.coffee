@@ -51,7 +51,7 @@ module.exports = class Dispatcher
 
     try
       clazz = new clazz()
-      clazz[method]( req, res )
+      clazz[method]( req, res, next )
     catch err
       return next new Error "Unable to execute method, because #{err}"
 
