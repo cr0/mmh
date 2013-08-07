@@ -9,11 +9,6 @@ module.exports =
     enabled: true
     secret: '1234567890abcdef'
 
-  mongo:
-    host:     '127.0.0.1'
-    port:     27017
-    database: 'test'
-
   auth:
     google:
       id:     ''

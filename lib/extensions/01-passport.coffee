@@ -26,8 +26,8 @@ module.exports = class Passport
       done null, user.id
 
     passport.deserializeUser (id, done) ->
-      #User.find id, (error, user) ->
-      done null, 123
+      User.findById id, (error, user) ->
+        done null, user
 
     @provider provider for provider in setup.provider
 
@@ -53,17 +53,18 @@ module.exports = class Passport
 
         delete profile._json
         delete profile._raw
+        delete profile.provider
+        delete profile.id
 
         req.session.auth =
-          provider:     provider
-          id:           id
+          provider:     
+            name:       provider
+            id:         id
           info:         profile
           credentials:  credentials
 
-        req.logIn profile, (err) ->
-          if err then next err
-          else next()
-
+        next()
+        
       )(req, res, next)
 
     Event.emit "passport:#{name}", yes

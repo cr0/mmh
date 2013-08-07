@@ -12,14 +12,10 @@ module.exports = class Application
   @instance: null
 
   server: null
-  database: null
 
   constructor: ->
     if Application.instance? then throw Error 'Application already running!';
     else Application.instance ?= @
-
-    # initialize db
-    @database ?= new Database()
 
     # initialize server
     port = config.server.port || 2000
@@ -46,20 +42,10 @@ module.exports = class Application
 
   
   start: ->
-    # launch when connected to database
-    Event.on 'database:connected', =>
-      console.log "Connected to mongodb at #{@database.host}:#{@database.port}/#{@database.database}"
-      try
-        @server.listen()
-        console.log "Server is listening on #{@server.port}" if @server.listening
-      catch err
-        console.error 'Unable to start listening', err
-        console.error 'Bye...'
-        process.exit()
-
-    Event.on 'database:error', (err) =>
-      console.error 'Unable to connect to database', err
-      process.exit()
-
-    @database.connect()
+    try
+      @server.listen()
+      console.log "Server is listening on #{@server.port}" if @server.listening
+    catch err
+      console.error 'Unable to start listening', err
+      console.error 'Bye...'
 
