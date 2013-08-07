@@ -2,7 +2,6 @@ fs          = require 'fs'
 
 Route       = require '../util/Route'
 Server      = require './Server'
-Database    = require './Database'
 Event       = require '../util/Event'
 
 config      = require "#{process.cwd()}/config/setup"
@@ -31,8 +30,7 @@ module.exports = class Application
         clazz = require __dirname + "/../extensions/#{file}"
         new clazz( @server.express )
       catch err
-        console.error err
-        Event.emit '!error', new Error "Unable to enable extension: #{err}"
+        throw new Error "Unable to enable extension: #{err}"
 
 
   addRoutes: ->

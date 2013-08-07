@@ -47,13 +47,12 @@ module.exports = class Dispatcher
     try
       clazz = require "#{process.cwd()}/app/controllers/#{controller}"
     catch err
-      Event.emit '!error:404', "Controller #{controller} not found", req, res
-      return
+      return next new Error "Controller #{controller} not found"
 
     try
       clazz = new clazz()
       clazz[method]( req, res )
     catch err
-      Event.emit '!error', "Unable to execute method, because #{err}", req, res
+      return next new Error "Unable to execute method, because #{err}"
 
 

@@ -3,7 +3,7 @@
   "private": true,
   "name": "mmh",
   "description": "doing as much as nothing",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/cr0/mmh"
@@ -21,7 +21,6 @@
   "dependencies": {
     "coffee-script": "1.6.x",
     "express": "3.3.x",
-    "mongoose": "3.6.x",
     "passport": "0.1.x",
     "passport-amazon": "0.1.x",
     "passport-google-oauth": "0.1.x",

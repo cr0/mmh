@@ -23,11 +23,12 @@ module.exports = class Server
 
     @express.set 'view engine', config.view.engine
 
-    @express.use express.compress()
+    #@express.use express.compress()
     @express.use (express.static(process.cwd() + '/public'))
     @express.use express.bodyParser()
     @express.use express.favicon()
     @express.use express.logger('dev')
+    @express.use express.errorHandler()
 
     @express.use express.cookieParser()
     if config.session.enabled and config.session.secret
