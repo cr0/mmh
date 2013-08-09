@@ -32,7 +32,8 @@ module.exports = class PolicyManager
     else if typeof evaluate is 'string' then return @callPolicy( evaluate, req, res )
     else if typeof evaluate is 'object' and evaluate instanceof Array
       for evaluateItem in evaluate
-        if not @callPolicy( evaluateItem, req, res ) then return false
+        result = @callPolicy( evaluateItem, req, res )
+        if result instanceof Error then return result
       return true
 
 
@@ -44,7 +45,7 @@ module.exports = class PolicyManager
     try
       clazz = require policyName
       clazz = new clazz()
-      if clazz not instanceof Policy then throw new Error 'Provided file is not a Policy'
+      if clazz not instanceof Policy then return new Error 'Provided file is not a Policy'
     catch e
       console.error "Invalid policy provided", e
       return false

@@ -4,6 +4,7 @@ express    = require 'express'
 
 Dispatcher = require './Dispatcher'
 Event      = require '../util/Event'
+NotFound   = require '../errors/NotFound'
 
 config     = require "#{process.cwd()}/config/setup"
 
@@ -25,6 +26,8 @@ module.exports = class Server
 
     #@express.use express.compress()
     @express.use (express.static(process.cwd() + '/public'))
+    
+    @express.use express.methodOverride()
     @express.use express.bodyParser()
     @express.use express.favicon()
     @express.use express.logger('dev')
@@ -54,38 +57,31 @@ module.exports = class Server
   # generic route: /:controller/:id?
   addGenericRoute: ->
     @express.get '/api/:controller/:id?', @dispatcher.get, @dispatcher.all
-    @express.post '/api/:controller/', @dispatcher.post, @dispatcher.all
+    @express.post '/api/:controller', @dispatcher.post, @dispatcher.all
     @express.put '/api/:controller/:id', @dispatcher.put, @dispatcher.all
     @express.del '/api/:controller/:id', @dispatcher.del, @dispatcher.all
 
   addErrorHandler: ->
     @express.use @express.router
 
-    class NotFound extends Error
-      name: "NotFound"
-      constructor: (@message) ->
-
     @express.use (req, res, next) ->
-      if req.xhr
-        res.status 404
-        res.json 
-          error: 
-            code: '404'
-            name: 'NotFound'
-            message: "Cannot find a route for #{req.url}"
-      else
-        next new NotFound "Cannot find a route for #{req.url}"
+      next new NotFound "Cannot find a route for #{req.url}"
 
     @express.use (err, req, res, next) ->
-      res.status 500
-      res.status 404 if err instanceof NotFound
+      errcode = if err.code then err.code else 500
+      res.status errcode
+
+      console.error err.stack if errcode is 500
+
+      message = if err.message instanceof Error then err.message.message else err.message 
+
       if req.xhr
         res.json 
           error: 
-            code: res.status
+            code: errcode
             name: err.name
-            message: err.message
+            message: message
             details: stack: err.stack, file: err.fileName, line: err.lineNumber
       else
-        res.render 'error', error: err, stack: err.stack, name: err.name, message: err.message, file: err.fileName, line: err.lineNumber
+        res.render 'error', error: err, code: errcode, stack: err.stack, name: err.name, message: message, file: err.fileName, line: err.lineNumber
     

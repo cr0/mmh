@@ -7,5 +7,4 @@ module.exports = class AuthenticatedPolicy extends Mmh.Policy
     if req.isAuthenticated() then return true
     else
       req.session.returnto = req.originalUrl || req.url
-      res.status(401).redirect('/auth/req')
-      false
+      return new Mmh.Error.Unauthorized 'User needs to be authenticated to perform this action'

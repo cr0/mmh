@@ -1,8 +1,9 @@
 
-PolicyManager = require '../access/PolicyManager'
-Event         = require '../util/Event'
+PolicyManager     = require '../access/PolicyManager'
+Event             = require '../util/Event'
+Unauthorized      = require '../errors/Unauthorized'
 
-module.exports = class Dispatcher
+module.exports    = class Dispatcher
 
   @controllerPrefix: 'Controller'
 
@@ -39,15 +40,14 @@ module.exports = class Dispatcher
     method     ?= 'index'
 
     # check if a policy forbiddes exection
-    if not @policyManager.validate(controller, method, req, res)
-      console.error "Policy denys access to #{controller}##{method}"
-      return
+    policyResult = @policyManager.validate(controller, method, req, res)
+    if policyResult instanceof Error then return next policyResult
 
     # try to find the controller
     try
       clazz = require "#{process.cwd()}/app/controllers/#{controller}"
     catch err
-      return next new Error "Controller #{controller} not found"
+      return next new Error "Unable to load #{controller}, because #{err}"
 
     try
       clazz = new clazz()
