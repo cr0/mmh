@@ -35,6 +35,9 @@ module.exports = class Server
       @express.use express.session
         secret: config.session.secret
 
+    @express.use (err, req, res, next) ->
+      res.render '500', error: err, stack: err.stack, message: err.message, file: err.fileName, line: err.lineNumber
+
   listen: ->
     @express.listen( @port )
     @listening = true

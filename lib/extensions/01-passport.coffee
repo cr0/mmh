@@ -44,6 +44,9 @@ module.exports = class Passport
         provider  = profile.provider
         id        = profile.id
 
+        if profile._json?.birthday then profile.birthday = profile._json?.birthday
+        if profile._json?.picture then profile.picture = profile._json?.picture
+        
         delete profile._json
         delete profile._raw
         delete profile.provider
