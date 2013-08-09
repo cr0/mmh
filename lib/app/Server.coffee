@@ -28,15 +28,11 @@ module.exports = class Server
     @express.use express.bodyParser()
     @express.use express.favicon()
     @express.use express.logger('dev')
-    @express.use express.errorHandler()
 
     @express.use express.cookieParser()
     if config.session.enabled and config.session.secret
       @express.use express.session
         secret: config.session.secret
-
-    @express.use (err, req, res, next) ->
-      res.render '500', error: err, stack: err.stack, message: err.message, file: err.fileName, line: err.lineNumber
 
   listen: ->
     @express.listen( @port )
@@ -61,4 +57,35 @@ module.exports = class Server
     @express.post '/api/:controller/', @dispatcher.post, @dispatcher.all
     @express.put '/api/:controller/:id', @dispatcher.put, @dispatcher.all
     @express.del '/api/:controller/:id', @dispatcher.del, @dispatcher.all
+
+  addErrorHandler: ->
+    @express.use @express.router
+
+    class NotFound extends Error
+      name: "NotFound"
+      constructor: (@message) ->
+
+    @express.use (req, res, next) ->
+      if req.xhr
+        res.status 404
+        res.json 
+          error: 
+            code: '404'
+            name: 'NotFound'
+            message: "Cannot find a route for #{req.url}"
+      else
+        next new NotFound "Cannot find a route for #{req.url}"
+
+    @express.use (err, req, res, next) ->
+      res.status 500
+      res.status 404 if err instanceof NotFound
+      if req.xhr
+        res.json 
+          error: 
+            code: res.status
+            name: err.name
+            message: err.message
+            details: stack: err.stack, file: err.fileName, line: err.lineNumber
+      else
+        res.render 'error', error: err, stack: err.stack, name: err.name, message: err.message, file: err.fileName, line: err.lineNumber
     

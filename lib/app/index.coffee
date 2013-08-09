@@ -22,6 +22,7 @@ module.exports = class Application
 
     @addExtensions()
     @addRoutes()
+    @server.addErrorHandler()
 
   addExtensions: ->
     console.log 
